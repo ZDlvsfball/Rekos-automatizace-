@@ -1,6 +1,6 @@
 const { test, expect } = require("@playwright/test");
 const constants = require('../src-rekos/constantsRekos');
-const { login, logout, loggedUser } = require('../src-rekos/testBaseRekos');
+
 
 
 const baseURL = constants.baseURL;
@@ -16,8 +16,13 @@ const city = constants.city;
 
 
 test("Editor ", async ({ page }) => {
-  //Log in by using function for login
-  await login(page, baseURL, usernameEditor, passwordEditor);
+  
+
+   //Login
+   const login= new LoginPage(page);
+   await login.gotoLoginPage(baseURL);
+   await login.login(usernameEditor,passwordEditor);
+   await login.loginAssert(page,usernameEditor);
 
   //Verification
   const headingText = await page
@@ -120,6 +125,7 @@ await page.selectOption('#form-request-pou-id', { value: optionValue });
     .getByRole("checkbox")
     .check();
 
-  // Log out
-  await logout(page, loggedOutPage); */
+  //Logout
+    await login.logOut();
+    await login.logOutAssert(loggedOutPage); */
 });

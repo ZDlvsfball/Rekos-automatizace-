@@ -1,6 +1,6 @@
 const { test, expect } = require("@playwright/test");
 const constants = require ('../src-rekos/constantsRekos')
-const { login, logout, loggedUser } = require('../src-rekos/testBaseRekos');
+import { LoginPage } from "../src-rekos/LoginPage";
 
 const baseURL = constants.baseURL
 const usernameAdmin = constants.usernameAdmin
@@ -9,8 +9,13 @@ const currentURL = constants.currentURL
 const loggedOutPage = constants.loggedOutPage
 
 test("Admin - Add a user", async ({ page }) => {
-  //Log in by using function for login
-  await login(page, baseURL, usernameAdmin, passwordAdmin);
+  
+
+  //login
+  const login = new LoginPage(page);
+  await login.gotoLoginPage(baseURL);
+  await login.login(usernameAdmin,passwordAdmin);
+  await login.loginAssert(page,usernameAdmin);
 
   //Verification
   const headingText = await page
@@ -54,8 +59,9 @@ test("Admin - Add a user", async ({ page }) => {
   
   
   
-  // Log out
-  await logout(page, loggedOutPage);
+  //Logout
+  await login.logOut();
+  await login.logOutAssert(loggedOutPage);
 });
 
 test("Admin - Delete a created user from previous test", async ({ page }) => {
@@ -104,6 +110,7 @@ test("Admin - Delete a created user from previous test", async ({ page }) => {
     expect(expectedDeletedUser).not.toBeVisible();
     
     
-    // Log out
-    await logout(page, loggedOutPage);
+    //Logout
+    await login.logOut();
+    await login.logOutAssert(loggedOutPage);
   });

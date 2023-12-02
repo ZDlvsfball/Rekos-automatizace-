@@ -1,6 +1,6 @@
 const { test, expect } = require("@playwright/test");
 const constants = require('../src-rekos/constantsRekos');
-const { login, logout, loggedUser, } = require('../src-rekos/testBaseRekos');
+
 
 const baseURL = constants.baseURL;
 const loggedOutPage = constants.loggedOutPage;
@@ -23,9 +23,15 @@ const passwordProtokol = constants.passwordProtokol;
 
 
 test("Admin - Basic opening loginpage test", async ({ page }) => {
-  //Log in by using function for login
-  await login(page, baseURL, usernameAdmin, passwordAdmin);
-
+  
+  //login
+  const login = new LoginPage(page);
+  await login.gotoLoginPage(baseURL);
+  await login.login(usernameAdmin,passwordAdmin);
+  await login.loginAssert(page,usernameAdmin);
+  
+  
+  
   //Verification
   const headingText = await page
     .getByRole("heading", { name: "Výpis uživatelů" })
@@ -47,8 +53,9 @@ test("Admin - Basic opening loginpage test", async ({ page }) => {
   console.log(pageTitle);
   expect(pageTitle).toMatch("Uživatelé | REKOS");
 
-  // Log out
-  await logout(page, loggedOutPage);
+  //Logout
+  await login.logOut();
+  await login.logOutAssert(loggedOutPage);
 });
 
 test("Editor - Basic opening loginpage test", async ({ page }) => {
@@ -76,8 +83,9 @@ test("Editor - Basic opening loginpage test", async ({ page }) => {
   console.log(pageTitle);
   expect(pageTitle).toMatch("REKOS");
 
-  // Log out
-  await logout(page, loggedOutPage);
+ //Logout
+ await login.logOut();
+ await login.logOutAssert(loggedOutPage);
 });
 
 test("Expert - Basic opening loginpage test", async ({ page }) => {
@@ -105,8 +113,9 @@ test("Expert - Basic opening loginpage test", async ({ page }) => {
   console.log(pageTitle);
   expect(pageTitle).toMatch("REKOS");
 
-  // Log out
-  await logout(page, loggedOutPage);
+  //Logout
+  await login.logOut();
+  await login.logOutAssert(loggedOutPage);
 });
 
 test("Protokol - Basic opening loginpage test", async ({ page }) => {
@@ -133,6 +142,7 @@ test("Protokol - Basic opening loginpage test", async ({ page }) => {
   console.log(pageTitle);
   expect(pageTitle).toMatch("REKOS");
 
-  // Log out
-  await logout(page, loggedOutPage);
+ //Logout
+ await login.logOut();
+ await login.logOutAssert(loggedOutPage);
 });
